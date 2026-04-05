@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Luminary — Personal Growth System</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Nunito+Sans:wght@300;400;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#FDF8EE;--bg2:#F7F0DC;--bg3:#EFE6CC;--card:#FFFDF6;--card2:#FBF5E6;
+  --border:#E4D9BC;--border2:#D4C9A8;
+  --text:#2D2416;--text2:#6B5B3E;--text3:#9A8B6E;
+  --gold:#C8952A;--gold2:#E8B84B;--gold-light:#FBF0D0;
+  --green:#5A7A52;--green-light:#EDF3EB;
+  --blue:#3D6B8A;--blue-light:#EAF1F6;
+  --rose:#8A4D52;--rose-light:#F6EDEE;
+  --radius:16px;--radius-sm:10px;
+  --shadow:0 2px 16px rgba(90,70,30,0.08);--shadow-lg:0 8px 40px rgba(90,70,30,0.13);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Nunito Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
+
+/* SETUP */
+#setup-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem 1rem;background:var(--bg);position:relative;overflow:hidden}
+#setup-page::before{content:'';position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(200,149,42,0.12) 0%,transparent 70%);top:-200px;right:-200px;pointer-events:none}
+#setup-page::after{content:'';position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(90,122,82,0.08) 0%,transparent 70%);bottom:-100px;left:-100px;pointer-events:none}
+.setup-card{background:var(--card);border:1px solid var(--border);border-radius:28px;box-shadow:var(--shadow-lg);padding:3rem 2.5rem;width:100%;max-width:520px;position:relative;z-index:1;animation:fadeUp 0.5s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.setup-logo{display:flex;align-items:center;gap:10px;margin-bottom:2.5rem;justify-content:center}
+.logo-mark{width:40px;height:40px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(200,149,42,0.3);flex-shrink:0}
+.logo-mark svg{width:22px;height:22px;fill:#fff}
+.logo-name{font-family:'Nunito',sans-serif;font-size:1.5rem;font-weight:800;color:var(--text);letter-spacing:-0.02em}
+.logo-name span{color:var(--gold)}
+.setup-heading{font-family:'Nunito',sans-serif;font-size:1.9rem;font-weight:800;color:var(--text);line-height:1.2;margin-bottom:0.5rem;letter-spacing:-0.02em;text-align:center}
+.setup-sub{color:var(--text3);font-size:0.95rem;margin-bottom:2rem;text-align:center;font-weight:400}
+.form-group{margin-bottom:1.25rem}
+.form-label{display:block;font-size:0.78rem;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:var(--text2);margin-bottom:0.4rem}
+.form-input,.form-textarea{width:100%;padding:0.75rem 1rem;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--bg2);font-family:'Nunito Sans',sans-serif;font-size:0.95rem;color:var(--text);outline:none;transition:border-color 0.18s,box-shadow 0.18s}
+.form-input:focus,.form-textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(200,149,42,0.12);background:var(--card)}
+.form-input::placeholder,.form-textarea::placeholder{color:var(--text3);font-weight:300}
+.form-textarea{resize:vertical;min-height:80px;line-height:1.6}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.btn-start{width:100%;padding:0.9rem;border-radius:var(--radius-sm);border:none;background:linear-gradient(135deg,var(--gold) 0%,var(--gold2) 100%);color:#fff;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;margin-top:0.5rem;box-shadow:0 4px 16px rgba(200,149,42,0.35);transition:transform 0.18s,box-shadow 0.18s;letter-spacing:0.01em}
+.btn-start:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(200,149,42,0.4)}
+
+/* NAV */
+#app{display:none;min-height:100vh;flex-direction:column}
+#app.visible{display:flex}
+.nav{background:var(--card);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:64px;position:sticky;top:0;z-index:50;box-shadow:0 1px 12px rgba(90,70,30,0.05)}
+.nav-left{display:flex;align-items:center;gap:1.5rem}
+.nav-tabs{display:flex;gap:4px}
+.nav-tab{padding:0.4rem 1rem;border-radius:8px;border:none;background:transparent;font-family:'Nunito',sans-serif;font-size:0.875rem;font-weight:600;color:var(--text3);cursor:pointer;transition:all 0.15s}
+.nav-tab:hover{background:var(--bg2);color:var(--text2)}
+.nav-tab.active{background:var(--gold-light);color:var(--gold)}
+.nav-user{display:flex;align-items:center;gap:0.6rem;font-size:0.875rem;font-weight:600;color:var(--text2)}
+.nav-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.8rem;color:#fff;box-shadow:0 2px 8px rgba(200,149,42,0.3)}
+
+/* PAGES */
+.page{display:none;padding:2.5rem 2rem;max-width:1300px;margin:0 auto;width:100%;animation:fadeIn 0.3s ease}
+.page.active{display:block}
+
+/* DASHBOARD */
+.welcome-banner{background:linear-gradient(120deg,var(--card) 0%,var(--gold-light) 100%);border:1px solid var(--border);border-radius:24px;padding:2rem 2.5rem;margin-bottom:2rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.welcome-text h1{font-family:'Nunito',sans-serif;font-size:1.8rem;font-weight:800;color:var(--text);letter-spacing:-0.02em;margin-bottom:0.3rem}
+.welcome-text p{color:var(--text2);font-size:0.95rem}
+.welcome-text p strong{color:var(--gold);font-weight:700}
+.welcome-quote{font-size:0.82rem;color:var(--text3);border-left:3px solid var(--gold2);padding-left:0.75rem;max-width:280px;font-style:italic;font-weight:400}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-bottom:2rem}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem 1.4rem;box-shadow:var(--shadow)}
+.stat-label{font-size:0.75rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--text3);margin-bottom:0.3rem}
+.stat-value{font-family:'Nunito',sans-serif;font-size:1.7rem;font-weight:800;color:var(--text);letter-spacing:-0.02em}
+.stat-sub{font-size:0.75rem;color:var(--text3);margin-top:2px}
+.section-grid{display:grid;gap:1.5rem}
+.two-col{grid-template-columns:1fr 1fr}
+.section-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;box-shadow:var(--shadow)}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;padding-bottom:0.75rem;border-bottom:1px solid var(--border)}
+.section-title{font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;color:var(--text);letter-spacing:-0.01em;display:flex;align-items:center;gap:8px}
+.section-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:0.9rem}
+.icon-gold{background:var(--gold-light)}.icon-green{background:var(--green-light)}.icon-blue{background:var(--blue-light)}.icon-rose{background:var(--rose-light)}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:0.45rem 1rem;border-radius:8px;font-family:'Nunito',sans-serif;font-size:0.8rem;font-weight:700;cursor:pointer;border:none;transition:all 0.15s}
+.btn-sm{padding:0.3rem 0.75rem;font-size:0.75rem}
+.btn-gold{background:var(--gold-light);color:var(--gold)}.btn-gold:hover{background:var(--gold);color:#fff}
+.btn-ghost{background:transparent;border:1.5px solid var(--border);color:var(--text2)}.btn-ghost:hover{background:var(--bg2)}
+
+/* CAT COLORS */
+.cat-personal{background:var(--gold-light);color:var(--gold)}
+.cat-health{background:var(--green-light);color:var(--green)}
+.cat-career{background:var(--blue-light);color:var(--blue)}
+.cat-finance{background:#EAF5F0;color:#2D7A5A}
+.cat-mindset{background:var(--rose-light);color:var(--rose)}
+.cat-travel{background:#FEF3E2;color:#8A6020}
+
+/* GOALS */
+.goal-item{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1rem 1.25rem;margin-bottom:0.75rem;transition:box-shadow 0.15s}
+.goal-item:hover{box-shadow:var(--shadow)}
+.goal-top{display:flex;align-items:flex-start;gap:10px;margin-bottom:0.6rem}
+.goal-cat{padding:0.18rem 0.6rem;border-radius:20px;font-size:0.68rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;white-space:nowrap;flex-shrink:0;margin-top:2px}
+.goal-title{font-family:'Nunito',sans-serif;font-size:0.95rem;font-weight:700;color:var(--text);flex:1;outline:none;border:none;background:transparent}
+.goal-title[contenteditable]:empty::before{content:attr(data-ph);color:var(--text3);font-weight:300}
+.goal-note{font-size:0.82rem;color:var(--text2);outline:none;width:100%;font-family:'Nunito Sans',sans-serif;border:none;background:transparent;line-height:1.6;font-weight:300}
+.goal-note[contenteditable]:empty::before{content:attr(data-ph);color:var(--text3)}
+.goal-footer{display:flex;align-items:center;gap:10px;margin-top:0.75rem}
+.progress-track{flex:1;height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:3px;transition:width 0.3s}
+.progress-pct{font-size:0.72rem;font-weight:700;color:var(--text3);min-width:28px}
+.icon-action{width:26px;height:26px;border-radius:6px;border:1px solid var(--border);background:var(--card);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:0.7rem;color:var(--text3);transition:all 0.12s}
+.icon-action:hover{background:var(--bg3);color:var(--text)}
+.icon-action.done{background:var(--green-light);color:var(--green);border-color:var(--green-light)}
+
+/* HABITS */
+.habit-item{display:flex;align-items:center;gap:12px;padding:0.75rem 0;border-bottom:1px solid var(--border)}
+.habit-item:last-child{border-bottom:none}
+.habit-name{flex:1;font-size:0.88rem;font-weight:600;color:var(--text);outline:none;border:none;background:transparent;font-family:'Nunito Sans',sans-serif}
+.habit-name[contenteditable]:empty::before{content:attr(data-ph);color:var(--text3);font-weight:300}
+.habit-days{display:flex;gap:4px}
+.habit-dot{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--border);background:var(--bg2);cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:700;color:transparent}
+.habit-dot.checked{background:var(--gold);border-color:var(--gold);color:#fff}
+.habit-day-label{font-size:0.65rem;font-weight:700;color:var(--text3);text-align:center;letter-spacing:0.03em}
+.days-header{display:flex;gap:4px;justify-content:flex-end;margin-bottom:6px;padding-right:38px}
+
+/* SUGGESTIONS */
+.suggestion-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.9rem 1.1rem;margin-bottom:0.6rem;display:flex;align-items:flex-start;gap:10px;cursor:pointer;transition:all 0.15s}
+.suggestion-card:hover{background:var(--gold-light);border-color:var(--gold2)}
+.sug-icon{font-size:1rem;flex-shrink:0;margin-top:2px}
+.sug-text{font-size:0.83rem;color:var(--text2);line-height:1.5;font-weight:400}
+.sug-text strong{color:var(--text);font-weight:700;display:block;margin-bottom:2px;font-size:0.85rem}
+.sug-use{font-size:0.72rem;color:var(--gold);font-weight:700;margin-top:4px;display:none}
+.suggestion-card:hover .sug-use{display:block}
+.sug-cats{display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1rem}
+.sug-cat-btn{padding:0.3rem 0.8rem;border-radius:20px;font-size:0.75rem;font-weight:700;cursor:pointer;border:1.5px solid var(--border);background:var(--card);color:var(--text3);transition:all 0.15s}
+.sug-cat-btn:hover,.sug-cat-btn.active{background:var(--text);color:#fff;border-color:var(--text)}
+
+/* VISION BOARD */
+.vision-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1.25rem}
+.vision-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);transition:transform 0.2s,box-shadow 0.2s}
+.vision-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.vision-img{width:100%;height:170px;object-fit:cover;background:var(--bg2);display:block}
+.vision-img-placeholder{width:100%;height:170px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;background:var(--bg2);transition:background 0.15s}
+.vision-img-placeholder:hover{background:var(--bg3)}
+.vision-body{padding:1rem 1.25rem}
+.vision-tag{display:inline-block;font-size:0.68rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;padding:0.15rem 0.55rem;border-radius:20px;margin-bottom:0.5rem}
+.vision-title{font-family:'Nunito',sans-serif;font-size:0.95rem;font-weight:800;color:var(--text);outline:none}
+.vision-title[contenteditable]:empty::before{content:attr(data-ph);color:var(--text3)}
+.vision-note{font-size:0.78rem;color:var(--text2);outline:none;margin-top:4px;line-height:1.5;font-weight:300}
+.vision-note[contenteditable]:empty::before{content:attr(data-ph);color:var(--text3)}
+.vision-footer{display:flex;align-items:center;justify-content:space-between;padding:0.6rem 1.25rem;border-top:1px solid var(--border);background:var(--bg2)}
+.add-vision-card{background:transparent;border:2px dashed var(--border);border-radius:var(--radius);min-height:280px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;transition:all 0.2s;color:var(--text3)}
+.add-vision-card:hover{border-color:var(--gold);color:var(--gold);background:var(--gold-light)}
+
+/* NOTES */
+.note-item{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1rem 1.25rem;margin-bottom:0.75rem}
+.note-date{font-size:0.7rem;color:var(--text3);margin-bottom:0.4rem;font-weight:600}
+.note-content{font-size:0.875rem;color:var(--text);outline:none;width:100%;min-height:40px;font-family:'Nunito Sans',sans-serif;line-height:1.7;font-weight:400;border:none;background:transparent}
+.note-content[contenteditable]:empty::before{content:attr(data-ph);color:var(--text3);font-weight:300}
+
+/* PROFILE */
+.profile-wrap{max-width:700px;margin:0 auto}
+.profile-banner{background:linear-gradient(120deg,var(--card),var(--gold-light));border:1px solid var(--border);border-radius:24px;padding:2.5rem;text-align:center;margin-bottom:2rem}
+.profile-avatar-big{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:800;font-size:1.8rem;color:#fff;margin:0 auto 1rem;box-shadow:0 6px 20px rgba(200,149,42,0.3)}
+.profile-name-big{font-family:'Nunito',sans-serif;font-size:1.6rem;font-weight:800;color:var(--text)}
+.profile-vision{font-size:0.95rem;color:var(--text2);margin-top:0.5rem}
+.profile-fields{display:flex;flex-direction:column;gap:1rem}
+.profile-field{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1rem 1.25rem}
+.profile-field-label{font-size:0.72rem;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:var(--text3);margin-bottom:0.4rem}
+.profile-field-val{font-size:0.95rem;color:var(--text);font-weight:600;outline:none;border:none;background:transparent;font-family:'Nunito Sans',sans-serif;width:100%}
+.profile-field-val[contenteditable]:empty::before{content:attr(data-ph);color:var(--text3);font-weight:300}
+
+/* MODAL */
+.overlay{display:none;position:fixed;inset:0;background:rgba(30,22,8,0.5);z-index:200;align-items:center;justify-content:center;padding:1rem}
+.overlay.open{display:flex}
+.modal{background:var(--card);border-radius:24px;width:100%;max-width:460px;box-shadow:0 24px 80px rgba(90,70,30,0.2);overflow:hidden;animation:fadeUp 0.22s ease}
+.modal-head{padding:1.5rem 1.75rem 1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-head h3{font-family:'Nunito',sans-serif;font-size:1.2rem;font-weight:800;color:var(--text)}
+.modal-body{padding:1.5rem 1.75rem;display:flex;flex-direction:column;gap:1rem}
+.modal-foot{padding:0.75rem 1.75rem 1.5rem;display:flex;gap:0.75rem;justify-content:flex-end}
+.field-group{display:flex;flex-direction:column;gap:0.35rem}
+.field-label{font-size:0.75rem;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:var(--text2)}
+.field-input,.field-select,.field-textarea{padding:0.65rem 0.9rem;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--bg2);font-family:'Nunito Sans',sans-serif;font-size:0.9rem;color:var(--text);outline:none;transition:border-color 0.15s;width:100%}
+.field-input:focus,.field-select:focus,.field-textarea:focus{border-color:var(--gold)}
+.field-textarea{min-height:80px;resize:vertical;line-height:1.6}
+.img-drop{border:2px dashed var(--border);border-radius:12px;padding:1.25rem;text-align:center;cursor:pointer;transition:all 0.15s;background:var(--bg2)}
+.img-drop:hover{border-color:var(--gold);background:var(--gold-light)}
+.img-preview{width:100%;max-height:120px;object-fit:cover;border-radius:8px;margin-top:8px;display:none}
+.range-wrap{display:flex;align-items:center;gap:10px}
+.range-wrap input[type=range]{flex:1;accent-color:var(--gold)}
+.range-val{font-size:0.85rem;font-weight:700;color:var(--text2);min-width:36px}
+.empty-tip{text-align:center;padding:2.5rem 1rem;color:var(--text3);font-size:0.875rem;font-weight:400}
+.empty-tip span{display:block;font-size:1.5rem;margin-bottom:0.5rem;opacity:0.5}
+
+@media(max-width:900px){.two-col{grid-template-columns:1fr}}
+@media(max-width:700px){.nav{padding:0 1rem}.nav-tabs{display:none}.page{padding:1.5rem 1rem}.form-row{grid-template-columns:1fr}.welcome-banner{flex-direction:column}.stats-row{grid-template-columns:repeat(2,1fr)}.setup-card{padding:2rem 1.5rem}.days-header,.habit-days{gap:2px}.habit-dot{width:22px;height:22px}}
+</style>
+</head>
+<body>
+
+<!-- SETUP PAGE -->
+<div id="setup-page">
+  <div class="setup-card">
+    <div class="setup-logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 24 24"><path d="M12 2L9.5 8.5H3L8 12.5L6 19L12 15L18 19L16 12.5L21 8.5H14.5L12 2Z"/></svg>
+      </div>
+      <div class="logo-name">Lumin<span>ary</span></div>
+    </div>
+    <h2 class="setup-heading">Welcome to your<br/>growth journey</h2>
+    <p class="setup-sub">A few quick things to personalize your space</p>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Your Name</label>
+        <input class="form-input" id="s-name" type="text" placeholder="e.g. Aryan" autocomplete="off"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Age</label>
+        <input class="form-input" id="s-age" type="number" placeholder="e.g. 23" min="5" max="120"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">What do you want to become?</label>
+      <input class="form-input" id="s-become" type="text" placeholder="e.g. A disciplined entrepreneur and athlete"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Your main focus / life goal</label>
+      <textarea class="form-textarea" id="s-focus" placeholder="e.g. Build a successful business, stay consistent with health, and grow every single day."></textarea>
+    </div>
+    <button class="btn-start" onclick="startApp()">Begin My Journey →</button>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+  <nav class="nav">
+    <div class="nav-left">
+      <div class="setup-logo" style="margin-bottom:0;gap:8px">
+        <div class="logo-mark" style="width:32px;height:32px;border-radius:10px">
+          <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:#fff"><path d="M12 2L9.5 8.5H3L8 12.5L6 19L12 15L18 19L16 12.5L21 8.5H14.5L12 2Z"/></svg>
+        </div>
+        <div class="logo-name" style="font-size:1.1rem">Lumin<span>ary</span></div>
+      </div>
+      <div class="nav-tabs">
+        <button class="nav-tab active" onclick="showPage('dashboard')">Dashboard</button>
+        <button class="nav-tab" onclick="showPage('goals')">Goals</button>
+        <button class="nav-tab" onclick="showPage('habits')">Habits</button>
+        <button class="nav-tab" onclick="showPage('board')">Vision Board</button>
+        <button class="nav-tab" onclick="showPage('notes')">Reflections</button>
+        <button class="nav-tab" onclick="showPage('profile')">Profile</button>
+      </div>
+    </div>
+    <div class="nav-user">
+      <div class="nav-avatar" id="navInitials">?</div>
+      <span id="navName" style="font-size:0.85rem"></span>
+    </div>
+  </nav>
+
+  <!-- DASHBOARD -->
+  <div class="page active" id="page-dashboard">
+    <div class="welcome-banner">
+      <div class="welcome-text">
+        <h1 id="wb-greeting">Good morning ✦</h1>
+        <p>You're on a journey to become <strong id="wb-become">something great</strong>.</p>
+        <p style="margin-top:6px;font-size:0.82rem;color:var(--text3)" id="wb-date"></p>
+      </div>
+      <div class="welcome-quote" id="wb-quote"></div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-label">Total Goals</div><div class="stat-value" id="stat-goals">0</div><div class="stat-sub">pinned to your board</div></div>
+      <div class="stat-card"><div class="stat-label">Completed</div><div class="stat-value" id="stat-done">0</div><div class="stat-sub">goals achieved</div></div>
+      <div class="stat-card"><div class="stat-label">Habit Checks</div><div class="stat-value" id="stat-habits">0</div><div class="stat-sub">this week</div></div>
+      <div class="stat-card"><div class="stat-label">Reflections</div><div class="stat-value" id="stat-notes">0</div><div class="stat-sub">written entries</div></div>
+    </div>
+    <div class="section-grid two-col" style="margin-bottom:1.5rem">
+      <div class="section-card">
+        <div class="section-header">
+          <div class="section-title"><div class="section-icon icon-gold">🎯</div>My Life Goal</div>
+          <button class="btn btn-sm btn-ghost" onclick="showPage('profile')">Edit</button>
+        </div>
+        <p id="dash-focus" style="font-size:0.9rem;color:var(--text2);line-height:1.7;font-weight:400"></p>
+      </div>
+      <div class="section-card">
+        <div class="section-header">
+          <div class="section-title"><div class="section-icon icon-green">⭐</div>Active Goals</div>
+          <button class="btn btn-sm btn-gold" onclick="showPage('goals')">View All</button>
+        </div>
+        <div id="dash-goals-list"></div>
+      </div>
+    </div>
+    <div class="section-card">
+      <div class="section-header" style="flex-wrap:wrap;gap:0.75rem">
+        <div class="section-title"><div class="section-icon icon-blue">💡</div>Guided Suggestions</div>
+        <div class="sug-cats">
+          <button class="sug-cat-btn active" onclick="filterSug('all',this)">All</button>
+          <button class="sug-cat-btn" onclick="filterSug('discipline',this)">Discipline</button>
+          <button class="sug-cat-btn" onclick="filterSug('skills',this)">Skills</button>
+          <button class="sug-cat-btn" onclick="filterSug('mindset',this)">Mindset</button>
+          <button class="sug-cat-btn" onclick="filterSug('health',this)">Health</button>
+        </div>
+      </div>
+      <div id="suggestions-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:0.75rem"></div>
+    </div>
+  </div>
+
+  <!-- GOALS -->
+  <div class="page" id="page-goals">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem">
+      <div>
+        <h2 style="font-family:'Nunito',sans-serif;font-size:1.5rem;font-weight:800;color:var(--text)">My Goals</h2>
+        <p style="font-size:0.85rem;color:var(--text3)">Set, track and achieve what matters to you</p>
+      </div>
+      <button class="btn btn-gold" onclick="openGoalModal()">+ Add Goal</button>
+    </div>
+    <div class="section-grid two-col">
+      <div>
+        <div style="margin-bottom:1rem;font-size:0.78rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--text3)">Active</div>
+        <div id="goals-active-list"></div>
+        <div class="empty-tip" id="goals-empty-active" style="display:none"><span>🌱</span>No active goals yet. Add your first one!</div>
+      </div>
+      <div>
+        <div style="margin-bottom:1rem;font-size:0.78rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--text3)">Completed ✓</div>
+        <div id="goals-done-list"></div>
+        <div class="empty-tip" id="goals-empty-done" style="display:none"><span>🏆</span>Completed goals appear here.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HABITS -->
+  <div class="page" id="page-habits">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem">
+      <div>
+        <h2 style="font-family:'Nunito',sans-serif;font-size:1.5rem;font-weight:800;color:var(--text)">Daily Habits</h2>
+        <p style="font-size:0.85rem;color:var(--text3)">Track your weekly consistency — small wins compound</p>
+      </div>
+      <button class="btn btn-gold" onclick="addHabit()">+ Add Habit</button>
+    </div>
+    <div class="section-card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem">
+        <div class="section-title"><div class="section-icon icon-green">📅</div>This Week</div>
+        <button class="btn btn-sm btn-ghost" onclick="resetWeek()">Reset Week</button>
+      </div>
+      <div class="days-header" id="days-header"></div>
+      <div id="habits-list"></div>
+      <div class="empty-tip" id="habits-empty"><span>🔥</span>No habits yet. Add one to start building consistency.</div>
+    </div>
+    <div class="section-card" style="margin-top:1.5rem">
+      <div class="section-header"><div class="section-title"><div class="section-icon icon-blue">💡</div>Habit Ideas to Try</div></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.6rem" id="habit-ideas"></div>
+    </div>
+  </div>
+
+  <!-- VISION BOARD -->
+  <div class="page" id="page-board">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem">
+      <div>
+        <h2 style="font-family:'Nunito',sans-serif;font-size:1.5rem;font-weight:800;color:var(--text)">Vision Board</h2>
+        <p style="font-size:0.85rem;color:var(--text3)">Pin images and words that represent your ideal life</p>
+      </div>
+      <button class="btn btn-gold" onclick="openBoardModal()">+ Pin Vision</button>
+    </div>
+    <div class="vision-grid" id="vision-grid"></div>
+  </div>
+
+  <!-- REFLECTIONS -->
+  <div class="page" id="page-notes">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem">
+      <div>
+        <h2 style="font-family:'Nunito',sans-serif;font-size:1.5rem;font-weight:800;color:var(--text)">Reflections & Notes</h2>
+        <p style="font-size:0.85rem;color:var(--text3)">Your private journal — write thoughts, wins, lessons</p>
+      </div>
+      <button class="btn btn-gold" onclick="addNote()">+ New Entry</button>
+    </div>
+    <div style="max-width:720px">
+      <div id="notes-list"></div>
+      <div class="empty-tip" id="notes-empty"><span>📓</span>Your reflections will appear here.<br/>Start writing — even one sentence helps.</div>
+    </div>
+  </div>
+
+  <!-- PROFILE -->
+  <div class="page" id="page-profile">
+    <div class="profile-wrap">
+      <div class="profile-banner">
+        <div class="profile-avatar-big" id="prof-avatar">?</div>
+        <div class="profile-name-big" id="prof-name">Your Name</div>
+        <div class="profile-vision" id="prof-become"></div>
+      </div>
+      <div class="profile-fields">
+        <div class="profile-field"><div class="profile-field-label">Full Name</div><div class="profile-field-val" contenteditable="true" data-ph="Your name" id="prof-name-edit" onblur="saveProfile()"></div></div>
+        <div class="profile-field"><div class="profile-field-label">Age</div><div class="profile-field-val" contenteditable="true" data-ph="Your age" id="prof-age-edit" onblur="saveProfile()"></div></div>
+        <div class="profile-field"><div class="profile-field-label">I want to become</div><div class="profile-field-val" contenteditable="true" data-ph="Your vision" id="prof-become-edit" onblur="saveProfile()"></div></div>
+        <div class="profile-field"><div class="profile-field-label">My main life focus / goal</div><div class="profile-field-val" contenteditable="true" data-ph="Write your life goal here..." id="prof-focus-edit" onblur="saveProfile()" style="min-height:70px"></div></div>
+      </div>
+      <div style="margin-top:1.5rem;text-align:center">
+        <button class="btn btn-ghost" onclick="if(confirm('Reset everything and start over?')){localStorage.clear();location.reload()}">Reset &amp; Start Over</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- GOAL MODAL -->
+<div class="overlay" id="goal-overlay" onclick="handleOverlay(event,'goal-overlay')">
+  <div class="modal">
+    <div class="modal-head"><h3 id="goal-modal-title">New Goal</h3><button class="icon-action" onclick="closeOverlay('goal-overlay')">✕</button></div>
+    <div class="modal-body">
+      <div class="field-group"><label class="field-label">Goal Title</label><input class="field-input" id="g-title" type="text" placeholder="e.g. Build a morning routine"/></div>
+      <div class="field-group"><label class="field-label">Category</label>
+        <select class="field-select" id="g-cat">
+          <option value="personal">Personal Growth</option><option value="health">Health &amp; Fitness</option>
+          <option value="career">Career &amp; Skills</option><option value="finance">Finance &amp; Wealth</option>
+          <option value="mindset">Mindset &amp; Focus</option><option value="travel">Travel &amp; Experience</option>
+        </select>
+      </div>
+      <div class="field-group"><label class="field-label">Notes / Why this matters</label><textarea class="field-textarea" id="g-note" placeholder="Write why this goal is important to you..."></textarea></div>
+      <div class="field-group"><label class="field-label">Progress</label>
+        <div class="range-wrap"><input type="range" min="0" max="100" value="0" id="g-prog" oninput="document.getElementById('g-prog-val').textContent=this.value+'%'"/><span class="range-val" id="g-prog-val">0%</span></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="closeOverlay('goal-overlay')">Cancel</button><button class="btn btn-gold" onclick="saveGoal()" style="background:var(--gold);color:#fff">Save Goal</button></div>
+  </div>
+</div>
+
+<!-- BOARD MODAL -->
+<div class="overlay" id="board-overlay" onclick="handleOverlay(event,'board-overlay')">
+  <div class="modal">
+    <div class="modal-head"><h3>Pin a Vision</h3><button class="icon-action" onclick="closeOverlay('board-overlay')">✕</button></div>
+    <div class="modal-body">
+      <div class="field-group"><label class="field-label">Vision Title</label><input class="field-input" id="b-title" type="text" placeholder="e.g. Dream home in the mountains"/></div>
+      <div class="field-group"><label class="field-label">Category</label>
+        <select class="field-select" id="b-cat">
+          <option value="personal">Personal</option><option value="health">Health</option>
+          <option value="career">Career</option><option value="finance">Finance</option>
+          <option value="mindset">Mindset</option><option value="travel">Travel</option>
+        </select>
+      </div>
+      <div class="field-group"><label class="field-label">Affirmation / Note</label><textarea class="field-textarea" id="b-note" placeholder="Write a short affirmation or why you want this..."></textarea></div>
+      <div class="field-group"><label class="field-label">Image (optional)</label>
+        <div class="img-drop" onclick="document.getElementById('b-img-input').click()">
+          <div style="font-size:1.2rem;opacity:0.5">🖼</div>
+          <div style="font-size:0.78rem;color:var(--text3);margin-top:4px">Tap to upload a photo</div>
+          <img id="b-img-preview" class="img-preview"/>
+        </div>
+        <input type="file" id="b-img-input" accept="image/*" style="display:none" onchange="previewImg(event)"/>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="closeOverlay('board-overlay')">Cancel</button><button class="btn btn-gold" onclick="saveBoardCard()" style="background:var(--gold);color:#fff">Pin It</button></div>
+  </div>
+</div>
+
+<script>
+const QUOTES=["Discipline is choosing between what you want now and what you want most.","Small daily improvements are the key to staggering long-term results.","The person you'll be in 5 years depends on the books you read and the habits you keep.","You don't rise to the level of your goals. You fall to the level of your systems.","Every master was once a disaster. Keep going.","Your only competition is who you were yesterday.","Hard choices, easy life. Easy choices, hard life.","Motivation gets you started. Discipline keeps you going.","The cost of discipline is always less than the cost of regret.","Consistency is what transforms average into excellence."];
+const SUGGESTIONS=[
+  {cat:'discipline',icon:'⏰',title:'Wake up at the same time every day',text:'Anchor your day with a consistent wake time — this single habit builds all others.'},
+  {cat:'discipline',icon:'📵',title:'No phone for the first 30 minutes',text:"Protect your morning mind. Don't let others' priorities invade your focus window."},
+  {cat:'discipline',icon:'📋',title:'Plan tomorrow the night before',text:'A 5-minute evening review cuts decision fatigue and gives your morning clarity.'},
+  {cat:'skills',icon:'📚',title:'Read 20 pages every day',text:'20 pages = ~18 books a year. Just 20 pages. That\'s all it takes.'},
+  {cat:'skills',icon:'🎯',title:'Practice one deep skill for 1 hour daily',text:'Deep work — fully focused, zero distractions — compounds faster than you think.'},
+  {cat:'skills',icon:'🔁',title:'Track what you learn in a notebook',text:'Writing what you learn boosts retention. Knowledge sticks when it\'s written.'},
+  {cat:'mindset',icon:'🧘',title:'5-minute silence or meditation daily',text:'A quiet mind makes better decisions. Even 5 minutes of stillness resets your focus.'},
+  {cat:'mindset',icon:'🚫',title:'Identify and eliminate one distraction',text:'What one thing steals the most of your time? Remove it. Your focus will skyrocket.'},
+  {cat:'mindset',icon:'✍️',title:'Write 3 things you\'re grateful for',text:'Gratitude shifts attention from what\'s missing to what\'s working.'},
+  {cat:'health',icon:'💧',title:'Drink 2–3 liters of water daily',text:'Dehydration kills focus. Hydration is the cheapest performance upgrade available.'},
+  {cat:'health',icon:'🏃',title:'Move your body for 30 minutes',text:'Walk, run, lift, stretch — anything. Movement is medicine for body and brain.'},
+  {cat:'health',icon:'🌙',title:'Sleep 7–8 hours consistently',text:'Sleep is when your brain consolidates learning and your body rebuilds. Guard it.'}
+];
+const HABIT_IDEAS=['📖 Read 20 pages','💧 Drink 3L water','🏃 30min exercise','📵 No screens before bed','🧘 5min meditation','✍️ Journal daily','📋 Plan your day','🥗 Eat clean','💤 Sleep by 11pm','🎯 Work on main goal','📚 Learn something new','🚶 Evening walk'];
+const CAT_LABELS={personal:'Personal',health:'Health',career:'Career',finance:'Finance',mindset:'Mindset',travel:'Travel'};
+const CAT_COLORS={personal:'cat-personal',health:'cat-health',career:'cat-career',finance:'cat-finance',mindset:'cat-mindset',travel:'cat-travel'};
+const DAYS=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+
+let DATA={profile:{name:'',age:'',become:'',focus:''},goals:[],habits:[],board:[],notes:[]};
+function load(){const s=localStorage.getItem('luminary_v3');if(s)DATA=JSON.parse(s);}
+function save(){localStorage.setItem('luminary_v3',JSON.stringify(DATA));}
+
+// SETUP
+function startApp(){
+  const name=document.getElementById('s-name').value.trim();
+  if(!name){document.getElementById('s-name').focus();return;}
+  DATA.profile={name,age:document.getElementById('s-age').value.trim(),become:document.getElementById('s-become').value.trim(),focus:document.getElementById('s-focus').value.trim()};
+  save();initApp();
+}
+
+function initApp(){
+  document.getElementById('setup-page').style.display='none';
+  document.getElementById('app').classList.add('visible');
+  populateNav();populateDashboard();renderGoals();renderHabits();renderBoard();renderNotes();renderProfile();renderSuggestions('all');renderHabitIdeas();updateStats();
+}
+
+function populateNav(){
+  const {name}=DATA.profile;
+  const init=name?name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase():'?';
+  document.getElementById('navInitials').textContent=init;
+  document.getElementById('navName').textContent=name?'Hi, '+name.split(' ')[0]:'';
+}
+
+function populateDashboard(){
+  const {name,become,focus}=DATA.profile;
+  const h=new Date().getHours();
+  const greet=h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+  document.getElementById('wb-greeting').textContent=greet+(name?' '+name.split(' ')[0]:'')+'  ✦';
+  document.getElementById('wb-become').textContent=become||'something great';
+  document.getElementById('dash-focus').textContent=focus||'Add your life goal in the Profile section.';
+  document.getElementById('wb-date').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('wb-quote').textContent='"'+QUOTES[Math.floor(Math.random()*QUOTES.length)]+'"';
+  renderDashGoals();
+}
+
+function renderDashGoals(){
+  const list=document.getElementById('dash-goals-list');
+  const active=DATA.goals.filter(g=>!g.done).slice(0,4);
+  if(!active.length){list.innerHTML='<div class="empty-tip" style="padding:1rem 0"><span>🌱</span>No goals yet. Add your first one!</div>';return;}
+  list.innerHTML=active.map(g=>`<div class="goal-item" style="margin-bottom:0.6rem"><div class="goal-top"><span class="goal-cat ${CAT_COLORS[g.category]}">${CAT_LABELS[g.category]}</span><div style="flex:1;font-family:Nunito,sans-serif;font-size:0.9rem;font-weight:700;color:var(--text)">${g.title}</div></div><div class="goal-footer"><div class="progress-track"><div class="progress-fill" style="width:${g.progress||0}%"></div></div><span class="progress-pct">${g.progress||0}%</span></div></div>`).join('');
+}
+
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach(t=>{
+    const txt=t.textContent.toLowerCase();
+    if((id==='dashboard'&&txt.includes('dash'))||(id==='goals'&&txt.includes('goal'))||(id==='habits'&&txt.includes('habit'))||(id==='board'&&txt.includes('vision'))||(id==='notes'&&txt.includes('reflect'))||(id==='profile'&&txt.includes('profile')))t.classList.add('active');
+  });
+  if(id==='dashboard'){populateDashboard();updateStats();}
+}
+
+// GOALS
+let editingGoalId=null;
+function openGoalModal(id){
+  editingGoalId=id||null;
+  const g=id?DATA.goals.find(x=>x.id===id):null;
+  document.getElementById('goal-modal-title').textContent=g?'Edit Goal':'New Goal';
+  document.getElementById('g-title').value=g?g.title:'';
+  document.getElementById('g-cat').value=g?g.category:'personal';
+  document.getElementById('g-note').value=g?g.note:'';
+  document.getElementById('g-prog').value=g?(g.progress||0):0;
+  document.getElementById('g-prog-val').textContent=(g?(g.progress||0):0)+'%';
+  document.getElementById('goal-overlay').classList.add('open');
+}
+function saveGoal(){
+  const title=document.getElementById('g-title').value.trim();
+  if(!title){document.getElementById('g-title').focus();return;}
+  const obj={id:editingGoalId||Date.now().toString(),title,category:document.getElementById('g-cat').value,note:document.getElementById('g-note').value.trim(),progress:parseInt(document.getElementById('g-prog').value),done:editingGoalId?(DATA.goals.find(g=>g.id===editingGoalId)?.done||false):false};
+  if(editingGoalId){const idx=DATA.goals.findIndex(g=>g.id===editingGoalId);DATA.goals[idx]=obj;}else{DATA.goals.unshift(obj);}
+  save();renderGoals();renderDashGoals();updateStats();closeOverlay('goal-overlay');
+}
+function renderGoals(){
+  const active=DATA.goals.filter(g=>!g.done);
+  const done=DATA.goals.filter(g=>g.done);
+  document.getElementById('goals-active-list').innerHTML=active.map(g=>goalCard(g)).join('');
+  document.getElementById('goals-done-list').innerHTML=done.map(g=>goalCard(g,true)).join('');
+  document.getElementById('goals-empty-active').style.display=active.length?'none':'block';
+  document.getElementById('goals-empty-done').style.display=done.length?'none':'block';
+}
+function goalCard(g,muted=false){
+  return `<div class="goal-item" style="${muted?'opacity:0.65':''}">
+    <div class="goal-top"><span class="goal-cat ${CAT_COLORS[g.category]}">${CAT_LABELS[g.category]}</span>
+    <div class="goal-title" contenteditable="true" data-ph="Goal title" onblur="updateGoalField('${g.id}','title',this.textContent)">${g.title}</div></div>
+    <div class="goal-note" contenteditable="true" data-ph="Add a note about this goal..." onblur="updateGoalField('${g.id}','note',this.textContent)">${g.note||''}</div>
+    <div class="goal-footer">
+      <div class="progress-track"><div class="progress-fill" style="width:${g.progress||0}%"></div></div>
+      <span class="progress-pct" id="pct-${g.id}">${g.progress||0}%</span>
+      <input type="range" min="0" max="100" value="${g.progress||0}" style="width:80px;accent-color:var(--gold)" oninput="updateGoalProgress('${g.id}',this.value,this)"/>
+      <div class="icon-action ${g.done?'done':''}" onclick="toggleGoalDone('${g.id}')">✓</div>
+      <div class="icon-action" onclick="openGoalModal('${g.id}')">✎</div>
+      <div class="icon-action" onclick="deleteGoal('${g.id}')">✕</div>
+    </div></div>`;
+}
+function updateGoalField(id,field,val){const g=DATA.goals.find(x=>x.id===id);if(g){g[field]=val.trim();save();}}
+function updateGoalProgress(id,val,el){
+  const g=DATA.goals.find(x=>x.id===id);
+  if(g){g.progress=parseInt(val);save();
+    const p=document.getElementById('pct-'+id);if(p)p.textContent=val+'%';
+    const bar=el.closest('.goal-footer').querySelector('.progress-fill');if(bar)bar.style.width=val+'%';
+  }
+}
+function toggleGoalDone(id){const g=DATA.goals.find(x=>x.id===id);if(g){g.done=!g.done;if(g.done)g.progress=100;save();renderGoals();renderDashGoals();updateStats();}}
+function deleteGoal(id){if(!confirm('Delete this goal?'))return;DATA.goals=DATA.goals.filter(g=>g.id!==id);save();renderGoals();updateStats();}
+
+// HABITS
+function renderHabits(){
+  document.getElementById('days-header').innerHTML=DAYS.map(d=>`<div class="habit-day-label" style="width:26px">${d}</div>`).join('');
+  const list=document.getElementById('habits-list');
+  if(!DATA.habits.length){list.innerHTML='';document.getElementById('habits-empty').style.display='block';return;}
+  document.getElementById('habits-empty').style.display='none';
+  list.innerHTML=DATA.habits.map(h=>`<div class="habit-item">
+    <div class="habit-name" contenteditable="true" data-ph="Habit name" onblur="updateHabit('${h.id}','name',this.textContent)">${h.name}</div>
+    <div class="habit-days">${DAYS.map((_,i)=>`<div class="habit-dot ${(h.days||[])[i]?'checked':''}" onclick="toggleHabitDay('${h.id}',${i})">✓</div>`).join('')}</div>
+    <div class="icon-action" onclick="deleteHabit('${h.id}')">✕</div>
+  </div>`).join('');
+}
+function addHabit(){
+  DATA.habits.push({id:Date.now().toString(),name:'',days:Array(7).fill(false)});
+  save();renderHabits();updateStats();
+  setTimeout(()=>{const els=document.querySelectorAll('.habit-name');if(els.length)els[els.length-1].focus();},100);
+}
+function updateHabit(id,field,val){const h=DATA.habits.find(x=>x.id===id);if(h){h[field]=val.trim();save();}}
+function toggleHabitDay(id,day){const h=DATA.habits.find(x=>x.id===id);if(h){h.days[day]=!h.days[day];save();renderHabits();updateStats();}}
+function deleteHabit(id){DATA.habits=DATA.habits.filter(h=>h.id!==id);save();renderHabits();updateStats();}
+function resetWeek(){if(!confirm('Reset all habit checks?'))return;DATA.habits.forEach(h=>h.days=Array(7).fill(false));save();renderHabits();updateStats();}
+function renderHabitIdeas(){
+  document.getElementById('habit-ideas').innerHTML=HABIT_IDEAS.map(h=>`<div class="suggestion-card" onclick="addHabitFromIdea('${h}')"><span class="sug-icon">${h.split(' ')[0]}</span><div class="sug-text"><strong>${h.replace(/^\S+\s/,'')}</strong><div class="sug-use">+ Add this habit</div></div></div>`).join('');
+}
+function addHabitFromIdea(text){
+  const name=text.replace(/^\S+\s/,'');
+  DATA.habits.push({id:Date.now().toString(),name,days:Array(7).fill(false)});
+  save();renderHabits();updateStats();showPage('habits');
+}
+
+// VISION BOARD
+let pendingBoardImg=null;
+function openBoardModal(){
+  pendingBoardImg=null;
+  document.getElementById('b-title').value='';document.getElementById('b-note').value='';
+  document.getElementById('b-cat').value='personal';
+  document.getElementById('b-img-preview').style.display='none';
+  document.getElementById('b-img-input').value='';
+  document.getElementById('board-overlay').classList.add('open');
+}
+function previewImg(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{pendingBoardImg=ev.target.result;const p=document.getElementById('b-img-preview');p.src=pendingBoardImg;p.style.display='block';};
+  r.readAsDataURL(f);
+}
+function saveBoardCard(){
+  const title=document.getElementById('b-title').value.trim();
+  if(!title){document.getElementById('b-title').focus();return;}
+  DATA.board.unshift({id:Date.now().toString(),title,category:document.getElementById('b-cat').value,note:document.getElementById('b-note').value.trim(),image:pendingBoardImg||null});
+  save();renderBoard();closeOverlay('board-overlay');
+}
+function renderBoard(){
+  const grid=document.getElementById('vision-grid');grid.innerHTML='';
+  DATA.board.forEach(b=>{
+    const card=document.createElement('div');card.className='vision-card';
+    card.innerHTML=`${b.image?`<img class="vision-img" src="${b.image}" alt=""/>`:`<div class="vision-img-placeholder"><div style="font-size:2rem;opacity:0.3">🌅</div><div style="font-size:0.75rem;color:var(--text3)">No image</div></div>`}
+      <div class="vision-body"><span class="vision-tag ${CAT_COLORS[b.category]}">${CAT_LABELS[b.category]}</span>
+      <div class="vision-title" contenteditable="true" data-ph="Vision title" onblur="updateBoard('${b.id}','title',this.textContent)">${b.title}</div>
+      <div class="vision-note" contenteditable="true" data-ph="Your affirmation..." onblur="updateBoard('${b.id}','note',this.textContent)">${b.note||''}</div></div>
+      <div class="vision-footer"><span style="font-size:0.72rem;color:var(--text3)">Vision pinned ✦</span><div class="icon-action" onclick="deleteBoard('${b.id}')">✕</div></div>`;
+    grid.appendChild(card);
+  });
+  const add=document.createElement('div');add.className='add-vision-card';
+  add.innerHTML='<div style="font-size:1.5rem;opacity:0.5">✦</div><div style="font-size:0.85rem;font-weight:700">Add a vision</div>';
+  add.onclick=openBoardModal;grid.appendChild(add);
+}
+function updateBoard(id,field,val){const b=DATA.board.find(x=>x.id===id);if(b){b[field]=val.trim();save();}}
+function deleteBoard(id){DATA.board=DATA.board.filter(b=>b.id!==id);save();renderBoard();}
+
+// NOTES
+function addNote(){
+  const today=new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
+  DATA.notes.unshift({id:Date.now().toString(),date:today,content:''});
+  save();renderNotes();updateStats();
+  setTimeout(()=>{const els=document.querySelectorAll('.note-content');if(els.length)els[0].focus();},100);
+}
+function renderNotes(){
+  const list=document.getElementById('notes-list');const empty=document.getElementById('notes-empty');
+  if(!DATA.notes.length){list.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+  list.innerHTML=DATA.notes.map(n=>`<div class="note-item"><div style="display:flex;align-items:center;justify-content:space-between"><div class="note-date">${n.date}</div><div class="icon-action" onclick="deleteNote('${n.id}')">✕</div></div><div class="note-content" contenteditable="true" data-ph="Write your thoughts, wins, or lessons learned today..." onblur="updateNote('${n.id}',this.textContent)">${n.content}</div></div>`).join('');
+}
+function updateNote(id,val){const n=DATA.notes.find(x=>x.id===id);if(n){n.content=val.trim();save();}}
+function deleteNote(id){DATA.notes=DATA.notes.filter(n=>n.id!==id);save();renderNotes();updateStats();}
+
+// PROFILE
+function renderProfile(){
+  const {name,age,become,focus}=DATA.profile;
+  const init=name?name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase():'?';
+  document.getElementById('prof-avatar').textContent=init;
+  document.getElementById('prof-name').textContent=name||'Your Name';
+  document.getElementById('prof-become').textContent=become?'Becoming: '+become:'';
+  document.getElementById('prof-name-edit').textContent=name||'';
+  document.getElementById('prof-age-edit').textContent=age||'';
+  document.getElementById('prof-become-edit').textContent=become||'';
+  document.getElementById('prof-focus-edit').textContent=focus||'';
+}
+function saveProfile(){
+  DATA.profile.name=document.getElementById('prof-name-edit').textContent.trim();
+  DATA.profile.age=document.getElementById('prof-age-edit').textContent.trim();
+  DATA.profile.become=document.getElementById('prof-become-edit').textContent.trim();
+  DATA.profile.focus=document.getElementById('prof-focus-edit').textContent.trim();
+  save();populateNav();renderProfile();
+  document.getElementById('dash-focus').textContent=DATA.profile.focus||'Add your life goal here.';
+  document.getElementById('wb-become').textContent=DATA.profile.become||'something great';
+}
+
+// SUGGESTIONS
+function renderSuggestions(cat){
+  const list=cat==='all'?SUGGESTIONS:SUGGESTIONS.filter(s=>s.cat===cat);
+  document.getElementById('suggestions-grid').innerHTML=list.map(s=>`<div class="suggestion-card" onclick="suggestToGoal('${s.title.replace(/'/g,"\\'")}','${s.cat}')"><span class="sug-icon">${s.icon}</span><div class="sug-text"><strong>${s.title}</strong>${s.text}<div class="sug-use">+ Add as Goal</div></div></div>`).join('');
+}
+function filterSug(cat,btn){
+  document.querySelectorAll('.sug-cat-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');renderSuggestions(cat);
+}
+function suggestToGoal(title,cat){
+  const catMap={discipline:'mindset',skills:'career',mindset:'mindset',health:'health'};
+  DATA.goals.unshift({id:Date.now().toString(),title,category:catMap[cat]||'personal',note:'From guided suggestions — make it your own!',progress:0,done:false});
+  save();renderGoals();updateStats();showPage('goals');
+}
+
+// STATS
+function updateStats(){
+  document.getElementById('stat-goals').textContent=DATA.goals.length;
+  document.getElementById('stat-done').textContent=DATA.goals.filter(g=>g.done).length;
+  document.getElementById('stat-habits').textContent=DATA.habits.reduce((a,h)=>a+(h.days||[]).filter(Boolean).length,0);
+  document.getElementById('stat-notes').textContent=DATA.notes.length;
+}
+
+// MODALS
+function closeOverlay(id){document.getElementById(id).classList.remove('open')}
+function handleOverlay(e,id){if(e.target===document.getElementById(id))closeOverlay(id)}
+
+// INIT
+load();
+if(DATA.profile.name){initApp();}
+</script>
+</body>
+</html>
